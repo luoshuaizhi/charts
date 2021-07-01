@@ -1,4 +1,3 @@
-{{- if eq .Values.kind "DaemonSet" }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -22,4 +21,3 @@ spec:
         {{- end }}
     spec:
       {{- include "fluentd.pod" . | nindent 6 }}
-{{- end }}
