@@ -2,11 +2,11 @@
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
 ## Current available global Docker image parameters: imageRegistry and imagePullSecrets
 ##
-global:
-  imageRegistry: myRegistryName
+global: {}
+  # imageRegistry: myRegistryName
   #   imagePullSecrets:
   #     - myRegistryKeySecretName
-  storageClass: myStorageClass
+  # storageClass: myStorageClass
 
 ## Uhopper Hadoop image version
 ## ref: https://hub.docker.com/r/bitnami/dokuwiki/tags/
@@ -32,3 +32,26 @@ image:
   ## ref:  https://github.com/bitnami/minideb-extras-base
   ##
   debug: false
+
+## Kubernetes svc configuration
+##
+service:
+  ## Kubernetes svc type
+  ## For minikube, set this to NodePort, ClusterIP, elsewhere use LoadBalancer
+  ##
+  type: ClusterIP
+
+  # HTTP Port
+  port: 24224
+
+resources: {}
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#  limits:
+#    cpu: 1000m
+#    memory: 4Gi
+#  requests:
+#    cpu: 250m
+#    memory: 256Mi

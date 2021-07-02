@@ -1,23 +1,29 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ include "fluentd.fullname" . }}
-  labels:
-    {{- include "fluentd.labels" . | nindent 4 }}
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
 spec:
   selector:
-    matchLabels:
-      {{- include "fluentd.selectorLabels" . | nindent 6 }}
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        {{- include "fluentd.selectorLabels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
     spec:
-      {{- include "fluentd.pod" . | nindent 6 }}
+      containers:
+        # TODO: Support hadoop version as option.
+        - name: namenode
+          image: {{ include "common.images.image" ( dict "imageRoot" .Values.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: tcp
+          volumeMounts:
+            - name: config
+              mountPath: /fluentd/etc
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "common.names.fullname" . }}

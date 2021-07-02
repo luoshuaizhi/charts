@@ -1,28 +1,15 @@
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "fluentd.fullname" . }}
-  labels:
-    {{- include "fluentd.labels" . | nindent 4 }}
-  {{- with .Values.service.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+  # annotations:
+    # TODO: Deprecated. Replace tolerate-unready-endpoints with
+    # v1.Service.PublishNotReadyAddresses.
+    # service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
 spec:
   type: {{ .Values.service.type }}
   ports:
-  - port: 24231
-    targetPort: metrics
-    protocol: TCP
-    name: metrics
-  {{- if .Values.service.ports }}
-  {{- range $port := .Values.service.ports }}
-  - name: {{ $port.name }}
-    port: {{ $port.containerPort }}
-    targetPort: {{ $port.containerPort }}
-    protocol: {{ $port.protocol }}
-  {{- end }}
-  {{- end }}
-  selector:
-    {{- include "fluentd.selectorLabels" . | nindent 4 }}
+    - port: {{ .Values.service.port }}
+      name: tcp
+  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
